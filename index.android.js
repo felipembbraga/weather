@@ -1,5 +1,6 @@
-import React, {AppRegistry, Component, View, StyleSheet} from 'react-native';
+import React, {AppRegistry, Component, Text, View, StyleSheet} from 'react-native';
 import MapView from 'react-native-maps';
+var Api = require('./src/api');
 
 const region = {
     latitude: 0,
@@ -8,25 +9,68 @@ const region = {
     longitudeDelta: 0
 };
 class Weather extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            marker: {
+                latitude: 37,
+                longitude: -95
+            },
+            city: '',
+            temperature: '',
+            description: ''
+        };
+    }
     render() {
+
         return (
             <View style={styles.container}>
-
-                <MapView style={styles.map} initialRegion={{
-                    latitude: 37.78825,
-                    longitude: -122.4324,
-                    latitudeDelta: 0.0922,
-                    longitudeDelta: 0.0421
-                }}></MapView>
+              <View style={styles.mapWrapper}>
+                <MapView style={styles.map} onRegionChangeComplete={this.onRegionChangeComplete.bind(this)}>
+                    <MapView.Marker coordinate={this.state.marker} title={this.state.city} description={this.state.description}/>
+                </MapView>
+              </View>
+                <View style={styles.textWrapper}>
+                  <Text style={styles.text}>{this.state.city}</Text>
+                  <Text style={styles.text}>{this.state.temperature}</Text>
+                  <Text style={styles.text}>{this.state.description}</Text>
+                </View>
             </View>
         )
+    }
+
+    onRegionChangeComplete(region) {
+        this.setState({
+            marker: {
+                longitude: region.longitude,
+                latitude: region.latitude
+            }
+        });
+
+        Api(region.latitude, region.longitude).then((data) => {
+          console.log(data);
+            this.setState(data);
+        });
     }
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'center'
+        justifyContent: 'center',
+        alignItems: 'stretch',
+        backgroundColor: '#F5FCFF'
+    },
+    mapWrapper: {
+      flex: 2
+    },
+    textWrapper: {
+      flex: 1,
+      alignItems: 'center'
+    },
+    text: {
+      fontSize: 30
     },
     map: {
         position: 'absolute',
@@ -35,6 +79,7 @@ const styles = StyleSheet.create({
         right: 0,
         bottom: 0
     }
+
 });
 
 AppRegistry.registerComponent('weather', () => Weather);
