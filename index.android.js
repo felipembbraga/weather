@@ -2,12 +2,6 @@ import React, {AppRegistry, Component, Text, View, StyleSheet} from 'react-nativ
 import MapView from 'react-native-maps';
 var Api = require('./src/api');
 
-const region = {
-    latitude: 0,
-    longitude: 0,
-    latitudeDelta: 0,
-    longitudeDelta: 0
-};
 class Weather extends Component {
 
     constructor(props) {
@@ -49,7 +43,7 @@ class Weather extends Component {
         return (
             <View style={styles.container}>
                 <View style={styles.mapWrapper}>
-                    <MapView region={this.state.region} style={styles.map} onRegionChangeComplete={this.onRegionChangeComplete.bind(this)}>
+                    <MapView initialRegion={this.state.region} style={styles.map} onRegionChangeComplete={this.onRegionChangeComplete.bind(this)}>
                         <MapView.Marker coordinate={this.state.marker} title={this.state.city} description={this.state.description}/>
                     </MapView>
                 </View>
